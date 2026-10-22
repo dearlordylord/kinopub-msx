@@ -1,7 +1,7 @@
 {
   "name": "KinoPUB",
   "version": "1.0.0",
-  "parameter": "menu:request:interaction:menu@https://halls74.github.io/kinopub-msx/public/app.html",
+  "parameter": "menu:request:interaction:menu@https://dearlordylord.github.io/kinopub-msx/public/app.html",
   "welcome": "none",
   "launcher": {
     "icon": "play-circle-outline",

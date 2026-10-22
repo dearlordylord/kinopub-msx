@@ -122,14 +122,14 @@ npx wrangler deploy
 ### B.2. Куда положить ключи client_id / client_secret
 Два варианта:
 
-- **Проще всего:** впишите их прямо в `public/js/config.js` (`CLIENT_ID`,
-  `CLIENT_SECRET`). Минус — файл публичный, ключи увидит любой. Для личного
-  использования это чаще всего приемлемо.
-- **Безопаснее (через сайт Cloudflare):** откройте ваш воркер →
-  **Settings → Variables and Secrets → Add**, добавьте `KP_CLIENT_ID` и
-  `KP_CLIENT_SECRET` (как Secret), нажмите Deploy. Воркер сам подставит их в
-  запросы `/oauth2/*`, а в `config.js` оставьте эти поля пустыми.
-  (Через CLI то же самое: `npx wrangler secret put KP_CLIENT_ID`.)
+В форке ключи храните только в секретах собственного Worker: `KP_CLIENT_ID` и
+`KP_CLIENT_SECRET`. Публичные `CLIENT_ID` / `CLIENT_SECRET` оставьте пустыми.
+Установите `PROXY_AUTH: true` и собственный `API_BASE` в `public/js/config.js`.
+Не используйте чужой прокси: через него проходят токены аккаунта.
+
+Прокси субтитров по умолчанию закрыт. Чтобы включить его, задайте переменную
+`SUBTITLE_HOSTS`: точные доверенные HTTPS-имена CDN через запятую. Не добавляйте
+произвольные домены; перенаправления заблокированы.
 
 > **Другой прокси?** Подойдёт любой (Deno Deploy, небольшой Node/Express,
 > nginx с `proxy_pass` и `add_header Access-Control-Allow-Origin *`). Он должен
@@ -142,6 +142,7 @@ npx wrangler deploy
 ## C. Настройка `public/js/config.js`
 ```js
 API_BASE: "https://kp-proxy.<вы>.workers.dev",   // URL вашего воркера, без слэша в конце
+PROXY_AUTH: true,                                 // ключи только в своём Worker
 CLIENT_ID: "",                                    // пусто, если ключи в секретах воркера
 CLIENT_SECRET: "",
 ```

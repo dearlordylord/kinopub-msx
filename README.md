@@ -1,3 +1,6 @@
+> Personal review fork: see [security review](docs/SECURITY-REVIEW.md).
+> No live account/TV playback has been verified. Own KinoPub API credentials are required.
+
 # Оболочка KinoPUB для Media Station X (LG webOS)
 
 Современный фронтенд («оболочка») для **KinoPUB** в стиле Apple TV, работающий

@@ -1,11 +1,8 @@
 /*
  * api.js — KinoPUB API client (kinoapi.com), ES5.
  *
- * Transport: plain XMLHttpRequest. The OAuth access token is passed as an
- * `access_token` query parameter (KinoPUB accepts this) instead of an
- * `Authorization: Bearer` header — this keeps requests "simple" and avoids a
- * CORS preflight, which matters when running inside a TV browser. All requests
- * still normally travel through your CORS proxy (see /worker/worker.js).
+ * Transport: XMLHttpRequest, Bearer headers for access tokens, form bodies
+ * for OAuth credentials. Secrets must never appear in request URLs.
  *
  * Every method takes a node-style callback: cb(err, data).
  */
@@ -19,12 +16,19 @@
     function base() { return C.API_BASE; }
 
     // --- low level HTTP -----------------------------------------------------
-    function http(method, url, cb) {
+    function http(method, url, cb, token) {
+        var body = null;
+        if (method === "POST" && url.indexOf("?") !== -1) {
+            body = url.slice(url.indexOf("?") + 1);
+            url = url.split("?")[0];
+        }
         var xhr;
         try { xhr = new XMLHttpRequest(); } catch (e) { cb({ error: "no_xhr" }); return; }
         try {
             xhr.open(method, url, true);
             xhr.timeout = 25000;
+            if (token) { xhr.setRequestHeader("Authorization", "Bearer " + token); }
+            if (body !== null) { xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); }
         } catch (e2) { cb({ error: "open_failed", detail: String(e2) }); return; }
 
         xhr.onreadystatechange = function () {
@@ -40,26 +44,24 @@
         };
         xhr.ontimeout = function () { cb({ error: "timeout" }); };
         xhr.onerror = function () { cb({ error: "network" }); };
-        try { xhr.send(null); } catch (e3) { cb({ error: "send_failed", detail: String(e3) }); }
+        try { xhr.send(body); } catch (e3) { cb({ error: "send_failed", detail: String(e3) }); }
     }
 
-    // GET with the current access token appended.
+    // GET with the access token in a header, never in URLs.
     function authGet(path, params, cb) {
         params = params || {};
-        params.access_token = Store.getAccess();
         var url = base() + path + U.qs(params);
         http("GET", url, function (err, data, status) {
             if (err && status === 401) {
                 // token rejected — try one refresh then retry once
                 Api.refresh(function (rErr) {
                     if (rErr) { cb(rErr); return; }
-                    params.access_token = Store.getAccess();
-                    http("GET", base() + path + U.qs(params), cb);
+                    http("GET", base() + path + U.qs(params), cb, Store.getAccess());
                 });
                 return;
             }
             cb(err, data, status);
-        });
+        }, Store.getAccess());
     }
 
     // Ensure we have a usable access token before an authorized call.

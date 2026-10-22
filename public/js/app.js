@@ -37,7 +37,7 @@
     // AUTH
     // -----------------------------------------------------------------------
     function authScreen(cb) {
-        if (!C.CLIENT_ID) {
+        if (!C.CLIENT_ID && !C.PROXY_AUTH) {
             var m = UI.message("Нет client_id",
                 "Укажите CLIENT_ID / CLIENT_SECRET в js/config.js (получить: support@kino.pub) или задайте их в прокси.");
             if (cb) { cb(m); } return m;

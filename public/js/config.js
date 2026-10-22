@@ -34,11 +34,12 @@
         // OAuth2 Device-Flow client credentials.
         // Request your own pair from support@kino.pub. If you route through the
         // proxy you can instead inject these server-side and leave them blank here.
+        PROXY_AUTH: false, // true only after deploying your own Worker with OAuth secrets
         CLIENT_ID: "",
         CLIENT_SECRET: "",
 
         // A human-readable device title reported to KinoPUB (/device/notify).
-        DEVICE_TITLE: "LG webOS (Media Station X)",
+        DEVICE_TITLE: "Samsung TV (Media Station X)",
         SOFTWARE: "kinopub-msx",
 
         // --- Persistent storage keys (TVXStorage / localStorage) -------------
