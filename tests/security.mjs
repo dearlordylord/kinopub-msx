@@ -45,3 +45,26 @@ context.KP_API.requestDeviceCode(() => {});
 assert.equal(requests[2].url, 'https://api.service-kp.com/oauth2/device');
 assert.equal(new URLSearchParams(requests[2].body).get('client_secret'), 'client-secret');
 console.log('Security checks passed: URL credential protection, secret injection, Bearer forwarding, subtitle allowlist and redirect blocking.');
+
+// Smoke test: the anonymous menu renders; server-side credentials allow the
+// activation flow without publishing the client_id/secret to the TV bundle.
+let handler;
+const storage = {};
+const uiContext = vm.createContext({ Date, setInterval() { return 1; }, clearInterval() {},
+  location: { href: 'https://dearlordylord.github.io/kinopub-msx/public/app.html' },
+  localStorage: { getItem(key) { return storage[key] || null; }, setItem(key, value) { storage[key] = value; }, removeItem(key) { delete storage[key]; } },
+  TVXPluginTools: { onReady(fn) { fn(); } },
+  TVXInteractionPlugin: { setupHandler(value) { handler = value; }, init() { handler.init(); } }
+});
+for (const file of ['config', 'util', 'store', 'api', 'ui', 'app']) vm.runInContext(fs.readFileSync(new URL('../public/js/' + file + '.js', import.meta.url), 'utf8'), uiContext);
+let content;
+handler.handleRequest('menu', {}, value => { content = value; });
+assert.equal(content.menu[0].label, 'Главная');
+handler.handleRequest('home', {}, value => { content = value; });
+assert.equal(content.pages[0].items[0].headline, 'Нет client_id');
+uiContext.KP_CONFIG.PROXY_AUTH = true;
+uiContext.KP_API.requestDeviceCode = cb => cb(null, { code: 'device', user_code: 'ABC123' });
+handler.handleRequest('home', {}, value => { content = value; });
+assert.equal(content.headline, 'Активация устройства');
+assert.ok(JSON.stringify(content).includes('ABC123'));
+console.log('Anonymous menu and Worker-only activation smoke checks passed.');
