@@ -61,3 +61,7 @@ appear in URLs, proxy secrets override supplied client secrets, Bearer headers
 are forwarded, arbitrary subtitle URLs are blocked and redirects are rejected.
 Disabling the subtitle host check made the test fail; restoring it passed.
 All first-party JavaScript also received Node syntax checks.
+
+## Update 2026-10-24
+
+Live API authentication and media-links were checked using a temporary device session. Public xbmc application credentials now permit standard device activation without a private Worker. No account tokens are committed. Native playback candidate and remaining functional limits: [NATIVE-MSX.md](NATIVE-MSX.md). The interaction page now restricts scripts and API connections with CSP. Physical MSX playback is still unverified.

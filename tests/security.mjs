@@ -60,6 +60,7 @@ for (const file of ['config', 'util', 'store', 'api', 'ui', 'app']) vm.runInCont
 let content;
 handler.handleRequest('menu', {}, value => { content = value; });
 assert.equal(content.menu[0].label, 'Главная');
+uiContext.KP_CONFIG.CLIENT_ID = '';
 handler.handleRequest('home', {}, value => { content = value; });
 assert.equal(content.pages[0].items[0].headline, 'Нет client_id');
 uiContext.KP_CONFIG.PROXY_AUTH = true;

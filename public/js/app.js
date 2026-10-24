@@ -342,6 +342,11 @@
                 handleItem(parts[1], cb);
                 return;
 
+            case "audio":
+            case "native":
+                global.KP_NATIVE.handle(p0, parts[1], cb);
+                return;
+
             case "similar":
                 Api.similar(parts[1], function (err, d) {
                     if (err) { cb(errScreen(err)); return; }

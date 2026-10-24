@@ -15,7 +15,7 @@
     function req(dataId)      { return "content:request:interaction:" + dataId + "@" + C.APP_URL; }
     function panelReq(dataId) { return "panel:request:interaction:"   + dataId + "@" + C.APP_URL; }
     function menuReq(dataId)  { return "menu:request:interaction:"    + dataId + "@" + C.APP_URL; }
-    function playAction(p)    { return "video:plugin:" + C.PLAYER_URL + U.qs(p); }
+    function playAction(p)    { return req("audio:" + encodeURIComponent(JSON.stringify(p))); }
 
     // top-right label: profile name + remaining subscription days
     function extensionLabel() {
@@ -173,14 +173,14 @@
                 var v1 = (item.videos && item.videos[0]) || {};
                 var resumeTime = flags.resume ? flags.resume.time : 0;
                 buttons.push({ type: "button", layout: bx + ",4,3,1", icon: "play-arrow",
-                    label: resumeTime > 0 ? ("Продолжить · " + U.hms(resumeTime)) : "Смотреть",
+                    label: "Смотреть",
                     color: C.COLOR.accent,
                     action: playAction({ mid: v1.id || "", id: item.id, video: 1, pos: Math.floor(resumeTime), type: item.type }) });
                 bx += 3;
             } else {
                 if (flags.resume && flags.resume.mid) {
                     buttons.push({ type: "button", layout: bx + ",4,3,1", icon: "play-arrow",
-                        label: "Продолжить · S" + flags.resume.season + "E" + flags.resume.video, color: C.COLOR.accent,
+                        label: "Смотреть · S" + flags.resume.season + "E" + flags.resume.video, color: C.COLOR.accent,
                         action: playAction({ mid: flags.resume.mid, id: item.id, video: flags.resume.video,
                             season: flags.resume.season, pos: Math.floor(flags.resume.time || 0), type: item.type }) });
                     bx += 3;

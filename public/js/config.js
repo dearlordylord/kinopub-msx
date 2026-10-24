@@ -32,11 +32,11 @@
         ],
 
         // OAuth2 Device-Flow client credentials.
-        // Request your own pair from support@kino.pub. If you route through the
-        // proxy you can instead inject these server-side and leave them blank here.
+        // Uses the existing public xbmc device client, as in the audited plugin.
+        // This is not an account token; account access remains device-local.
         PROXY_AUTH: false, // true only after deploying your own Worker with OAuth secrets
-        CLIENT_ID: "",
-        CLIENT_SECRET: "",
+        CLIENT_ID: "xbmc",
+        CLIENT_SECRET: "cgg3gtifu46urtfp2zp1nqtba0k2ezxh",
 
         // A human-readable device title reported to KinoPUB (/device/notify).
         DEVICE_TITLE: "Samsung TV (Media Station X)",
